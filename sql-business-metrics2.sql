@@ -486,3 +486,24 @@ and (b.segitem1,b.segitem1) in (('0302-4.0','0302-4.0'),
 ('306100.7','306100.7'),.......................................... X 1000
  the last record without comm
  ------------------------------------------------------------------------------------------------------------------------------------------
+Latest Election from a Table
+
+INNER JOIN EmployeeElection election (NOLOCK)
+ON  election.employeeid = employee.employeeid
+AND election.Line_RecordID = Line.RecordID
+AND election.RecordID = (SELECT TOP 1 X.RecordID
+                 FROM employeeelection X (NOLOCK)
+                 INNER JOIN employeeevent Y (NOLOCK)
+                 ON Y.RecordID = X.EmployeeEvent_RecordID
+                 WHERE X.employeeid = election.employeeid
+                 AND   X.Line_RecordID = election.Line_RecordID
+                 AND   X.RecordEffective <= @AsOfDate
+                 AND   Y.LookupEmployeeEventStatus_RecordID IN (1,2,3)
+                 ORDER BY X.RecordEffective DESC, X.RecordSequence DESC)
+ 
+ 
+
+
+
+
+
